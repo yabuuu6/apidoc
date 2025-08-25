@@ -1,0 +1,82 @@
+/* === ROOT CONTAINER === */
+#root {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f9f9fb;
+}
+
+/* === LOGO ANIMASI === */
+.logo {
+  height: 5em;
+  padding: 1.5em;
+  transition: transform 0.3s ease, filter 0.3s ease;
+  filter: drop-shadow(0 0 1em #aaa);
+}
+
+.logo:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .logo.react {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+/* === KARTU === */
+.card {
+  background-color: #ffffff;
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  text-align: left;
+  transition: transform 0.2s ease;
+}
+
+.card:hover {
+  transform: scale(1.01);
+}
+
+/* === ACTION BUTTONS === */
+.card .btn {
+  margin-right: 0.5rem;
+}
+
+/* === BADGE STATUS === */
+.badge.production {
+  background-color: #d4edda;
+  color: #155724;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+.badge.develop {
+  background-color: #cce5ff;
+  color: #004085;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+}
+
+/* === FOOTER INFO === */
+.read-the-docs {
+  color: #777;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
