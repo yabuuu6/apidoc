@@ -3,7 +3,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Homepage';
 import AddDomainForm from './components/AddDomainForm';
 import AddEndpointForm from './components/AddEndpointForm';
-import Navbar from './components/navbar';
+import Navbar from './components/Appbar';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
