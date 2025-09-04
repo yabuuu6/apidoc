@@ -1,5 +1,6 @@
-import React from 'react';
+
 import { Link, useLocation } from 'react-router-dom';
+import '../style/appbarstyle.css';
 
 export default function Navbar() {
   const location = useLocation();
@@ -39,7 +40,7 @@ export default function Navbar() {
                 className={`nav-link ${location.pathname === '/add-domain' ? 'active' : ''}`}
                 to="/add-domain"
               >
-                Tambah Domain
+                Domain
               </Link>
             </li>
             <li className="nav-item">
@@ -47,7 +48,15 @@ export default function Navbar() {
                 className={`nav-link ${location.pathname === '/add-endpoint' ? 'active' : ''}`}
                 to="/add-endpoint"
               >
-                Tambah Endpoint
+                Endpoint
+              </Link>
+              </li>
+              <li className="nav-item">
+              <Link
+                className={`nav-link ${location.pathname === '/add-restapi' ? 'active' : ''}`}
+                to="/add-restapi"
+              >
+                RestAPI
               </Link>
             </li>
           </ul>

@@ -3,7 +3,7 @@ import { useApiStore } from '../store/useApiStore';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-
+import '../style/AddDomainstyle.css';
 
 export default function AddDomainForm() {
   const [newDomain, setNewDomain] = useState('');
@@ -40,32 +40,106 @@ export default function AddDomainForm() {
   };
 
   return (
-    <div className="container my-4">
-      <form onSubmit={handleSubmit}>
-        <div className="card shadow-sm">
-          <div className="card-body">
-            <h5 className="card-title text-center mb-3">Tambah Domain</h5>
+    <div className="add-domain-container">
+      <div className="add-domain-wrapper">
+        {/* Header */}
+        <div className="header-section">
+          <h1 className="main-title">Dokumentasi API</h1>
+          <div className="title-underline"></div>
+        </div>
 
-            <div className="mb-3">
-              <label htmlFor="domainInput" className="form-label fw-semibold">
-                Masukkan Domain
+        {/* Form Card */}
+        <div className="form-card">
+          <div className="form-header">
+            <h2 className="form-title">
+              <div className="form-icon">
+                <span></span>
+              </div>
+              Tambah Domain Baru
+            </h2>
+          </div>
+
+          <div className="form-content">
+            <div className="form-group">
+              <label htmlFor="domainInput" className="form-label">
+                Masukkan Domain <span className="required">*</span>
               </label>
-              <input
-                type="text"
-                id="domainInput"
-                value={newDomain}
-                onChange={(e) => setNewDomain(e.target.value)}
-                placeholder="https://example.com"
-                className="form-control"
-              />
+              <div className="input-wrapper">
+                <input
+                  type="text"
+                  id="domainInput"
+                  value={newDomain}
+                  onChange={(e) => setNewDomain(e.target.value)}
+                  placeholder="https://api.example.com"
+                  className="form-input"
+                />
+                <div className="input-icon">
+                  <span></span>
+                </div>
+              </div>
+              <div className="input-hint">
+                Format: https://domain.com atau http://subdomain.domain.com
+              </div>
             </div>
 
-            <button type="submit" className="btn btn-success w-100">
-              Tambah Domain
-            </button>
+            {/* Submit Button */}
+            <div className="submit-section">
+              <button
+                onClick={handleSubmit}
+                className="submit-button"
+              >
+                <div className="button-icon">
+                  <span>+</span>
+                </div>
+                Tambah Domain
+              </button>
+            </div>
           </div>
         </div>
-      </form>
+
+        {/* Existing Domains Card */}
+        {domains.length > 0 && (
+          <div className="domains-card">
+            <div className="domains-header">
+              <h3 className="domains-title">
+                <div className="domains-icon">
+                  <span>📋</span>
+                </div>
+                Domain Terdaftar ({domains.length})
+              </h3>
+            </div>
+            <div className="domains-list">
+              {domains.map((domain, index) => (
+                <div key={index} className="domain-item">
+                  <div className="domain-indicator"></div>
+                  <span className="domain-url">{domain}</span>
+                  <div className="domain-status">
+                    <span className="status-badge">Active</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Info Card */}
+        <div className="info-card">
+          <div className="info-content">
+            <div className="info-icon">
+              <span>ⓘ</span>
+            </div>
+            <div className="info-text">
+              <p className="info-title">Tips Penggunaan:</p>
+              <ul className="info-list">
+                <li> Domain harus dimulai dengan http:// atau https://</li>
+                <li> Pastikan domain dapat diakses dan valid</li>
+                <li> Duplikasi domain akan otomatis ditolak</li>
+                <li> Domain akan digunakan sebagai base URL untuk endpoint</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

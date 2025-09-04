@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useApiStore } from "../store/useApiStore";
 import EndpointList from "../components/EndpointList";
-import AddEndpointForm from "../components/AddEndpointForm";
+import '../style/HomePage.css';
 
 export default function HomePage() {
   const {
@@ -14,7 +14,6 @@ export default function HomePage() {
   const [domainSearch, setDomainSearch] = useState("");
 
   useEffect(() => {
-    // Reset filter & fetch data dari server
     setStatusFilter("");
     setDomainSearch("");
     fetchEndpoints();
@@ -22,37 +21,69 @@ export default function HomePage() {
   }, [fetchEndpoints, fetchDomains, setStatusFilter]);
 
   return (
-    <div className="container mt-4">
-      <h1 className="fw-bold mb-4 text-center">
-        <i className="bi bi-journal-code me-2"></i> Dokumentasi API
+    <div className="home-container home-spacing-top">
+      {/* Header */}
+      <h1 className="home-title">
+        <i className="bi bi-journal-code"></i>
+        Dokumentasi API
       </h1>
+      <p className="home-subtitle">
+        Kelola dan pantau semua endpoint API Anda dalam satu platform
+      </p>
+      {/* Main Title */}
+      <h2 className="home-main-title">
+        Gunakan API Anda dengan Mudah dan Efisien
+      </h2>
 
       {/* Filter Bar */}
-      <div className="row mb-4">
-        <div className="col-md-6 mb-3">
-          <label className="form-label fw-semibold">Cari Domain</label>
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Contoh: api.example.com"
-            value={domainSearch}
-            onChange={(e) => setDomainSearch(e.target.value)}
-          />
+      <div className="home-filter-container home-spacing-bottom-large">
+        <div className="home-card user-research">
+          <div className="home-card-content">
+            <div className="home-card-icon">
+              <i className="bi bi-search"></i>
+            </div>
+            <div className="home-card-title">Pencarian Domain</div>
+            <div className="home-card-description">
+              Cari Domain API
+            </div>
+            <div className="home-form-group">
+              <i className="bi bi-search form-icon"></i>
+              <input
+                type="text"
+                className="home-form-control"
+                placeholder="Contoh: api.example.com"
+                value={domainSearch}
+                onChange={(e) => setDomainSearch(e.target.value)}
+              />
+            </div>
+          </div>
         </div>
 
-        <div className="col-md-6 mb-3">
-          <label className="form-label fw-semibold">Filter Status</label>
-          <select
-            className="form-select"
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-          >
-            <option value="">Semua</option>
-            <option value="Develop">Develop</option>
-            <option value="Production">Production</option>
-          </select>
+        <div className="home-card testing">
+          <div className="home-card-content">
+            <div className="home-card-icon">
+              <i className="bi bi-toggle-on"></i>
+            </div>
+            <div className="home-card-title">Status Environment</div>
+            <div className="home-card-description">
+              Filter Status Environment
+            </div>
+            <div className="home-form-group">
+              <i className="bi bi-funnel form-icon"></i>
+              <select
+                className="home-form-select"
+                value={statusFilter}
+                onChange={(e) => setStatusFilter(e.target.value)}
+              >
+                <option value="">Semua</option>
+                <option value="Develop">Develop</option>
+                <option value="Production">Production</option>
+              </select>
+            </div>
+          </div>
         </div>
       </div>
+
       {/* Daftar Endpoint */}
       <EndpointList domainSearch={domainSearch} />
     </div>
