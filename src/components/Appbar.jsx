@@ -1,64 +1,43 @@
-
 import { Link, useLocation } from 'react-router-dom';
-import '../style/appbarstyle.css';
 
 export default function Navbar() {
   const location = useLocation();
 
+  const navItems = [
+    { name: 'Beranda', path: '/' },
+    { name: 'Domain', path: '/add-domain' },
+    { name: 'Endpoint', path: '/add-endpoint' },
+    { name: 'RestAPI', path: '/add-restapi' },
+  ];
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-dark bg-primary">
-      <div className="container">
-        <Link className="navbar-brand fw-bold" to="/">
-          DocAPIku
-        </Link>
+    <nav className="bg-blue-900 text-white shadow-md fixed top-0 left-0 w-full z-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="flex justify-between h-16 items-center">
+          {/* Logo */}
+          <Link to="/" className="text-xl font-bold text-white">
+            DocAPIku
+          </Link>
 
-        {/* Toggler untuk mobile */}
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
-
-        <div className="collapse navbar-collapse" id="navbarNav">
-          <ul className="navbar-nav ms-auto">
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/' ? 'active' : ''}`}
-                to="/"
-              >
-                Beranda
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/add-domain' ? 'active' : ''}`}
-                to="/add-domain"
-              >
-                Domain
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/add-endpoint' ? 'active' : ''}`}
-                to="/add-endpoint"
-              >
-                Endpoint
-              </Link>
-              </li>
-              <li className="nav-item">
-              <Link
-                className={`nav-link ${location.pathname === '/add-restapi' ? 'active' : ''}`}
-                to="/add-restapi"
-              >
-                RestAPI
-              </Link>
-            </li>
+          {/* Desktop Menu */}
+          <ul className="hidden md:flex space-x-6">
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <li key={item.path}>
+                  <Link
+                    to={item.path}
+                    className={`transition-colors duration-300 ease-in-out font-medium ${
+                      isActive
+                        ? 'text-gray-400 font-semibold'
+                        : 'text hover:text-yellow-300'
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </div>
       </div>

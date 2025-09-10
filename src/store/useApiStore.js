@@ -11,30 +11,39 @@ export const useApiStore = create((set, get) => ({
 
   setStatusFilter: (status) => set({ statusFilter: status }),
 
-  // ENDPOINTS
-
-  fetchEndpoints: async () => {
+  getData: async (path, key, mapper) => {
     try {
-      const res = await axios.get(`${base_url}/get`);
-
-      const endpointsWithArrayWebsites = res.data.map(ep => ({
-        ...ep,
-        websites: typeof ep.websites === 'string'
-          ? ep.websites.split(',').map(w => w.trim())
-          : ep.websites || [],
-      }));
-
-      console.log('Endpoints dari server:', endpointsWithArrayWebsites);
-      set({ endpoints: endpointsWithArrayWebsites });
+      const res = await axios.get(`${base_url}/${path}`);
+      const data = typeof mapper === 'function' ? res.data.map(mapper) : res.data;
+      set({ [key]: data });
     } catch (err) {
-      console.error('Gagal fetch endpoints:', err.message);
+      console.error(`Gagal Menampilkan Data ${key}:`, err.message);
     }
+  },
+
+  deleteData: async (path, id, fetchFunc) => {
+    try {
+      await axios.delete(`${base_url}/${path}/${id}`);
+      if (typeof fetchFunc === 'function') await fetchFunc();
+    } catch (err) {
+      console.error(`Gagal Hapus Data ${path}:`, err?.response?.data?.error || err.message);
+    }
+  },
+
+  // ENDPOINTS
+  fetchEndpoints: async () => {
+    await get().getData('get', 'endpoints', (ep) => ({
+      ...ep,
+      websites: typeof ep.websites === 'string'
+        ? ep.websites.split(',').map(w => w.trim())
+        : ep.websites || [],
+    }));
   },
 
   addEndpoint: async (endpoint) => {
     try {
       const res = await axios.post(`${base_url}/post`, endpoint);
-      get().fetchEndpoints();
+      await get().fetchEndpoints();
       return res.data;
     } catch (err) {
       console.error('Gagal menambahkan endpoint:', err.message);
@@ -44,30 +53,20 @@ export const useApiStore = create((set, get) => ({
   updateEndpoint: async (id, updatedData) => {
     try {
       await axios.put(`${base_url}/put/${id}`, updatedData);
-      get().fetchEndpoints();
+      await get().fetchEndpoints();
     } catch (err) {
       console.error('Gagal update endpoint:', err.message);
     }
   },
 
   deleteEndpoint: async (id) => {
-    try {
-      await axios.delete(`${base_url}/delete/${id}`);
-      get().fetchEndpoints();
-    } catch (err) {
-      console.error('Gagal hapus endpoint:', err.message);
-    }
+    await get().deleteData('delete', id, get().fetchEndpoints);
   },
 
   generateResponseJson: async (tableName = 'endpoints') => {
     try {
       const res = await axios.get(`${base_url}/describe/${tableName}`);
-      if (res.data.success) {
-        return res.data.data;
-      } else {
-        console.error('Respon describe gagal:', res.data.message);
-        return null;
-      }
+      return res.data.success ? res.data.data : null;
     } catch (err) {
       console.error('Gagal generate response dari DB:', err.message);
       return null;
@@ -75,34 +74,22 @@ export const useApiStore = create((set, get) => ({
   },
 
   // DOMAINS
-
   fetchDomains: async () => {
-    try {
-      const res = await axios.get(`${base_url}/domain/get`);
-      set({ domains: res.data.map((d) => d.url) });
-    } catch (err) {
-      console.error('Gagal fetch domains:', err.message);
-    }
+    await get().getData('domain/get', 'domains', (d) => d.url);
   },
 
   addDomain: async (url) => {
     try {
       await axios.post(`${base_url}/domain/post`, { url });
-      get().fetchDomains();
+      await get().fetchDomains();
     } catch (err) {
       console.error('Gagal tambah domain:', err.message);
     }
   },
 
   // REST APIs
-
   fetchRestApis: async () => {
-    try {
-      const res = await axios.get(`${base_url}/restapi/get`);
-      set({ restApis: res.data });
-    } catch (err) {
-      console.error("❌ Gagal fetch REST APIs:", err?.response?.data?.error || err.message);
-    }
+    await get().getData('restapi/get', 'restApis');
   },
 
   addRestApi: async (data) => {
@@ -117,29 +104,19 @@ export const useApiStore = create((set, get) => ({
         database_name: typeof data.database_name === "string" ? data.database_name.trim() : "",
       };
 
-      console.log("🚀 Payload yang dikirim:", payload);
+      console.log("Payload yang dikirim:", payload);
 
       const res = await axios.post(`${base_url}/restapi/post`, payload);
-
       await get().fetchRestApis();
-
       return res.data;
     } catch (err) {
-      const errorMsg =
-        err?.response?.data?.error ||
-        err?.message ||
-        "Gagal menambahkan REST API";
-      console.error("❌ Gagal tambah REST API:", errorMsg);
+      const errorMsg = err?.response?.data?.error || err?.message || "Gagal menambahkan REST API";
+      console.error("Gagal tambah REST API:", errorMsg);
       throw new Error(errorMsg);
     }
   },
 
   deleteRestApi: async (id) => {
-    try {
-      await axios.delete(`${base_url}/restapi/delete/${id}`);
-      await get().fetchRestApis();
-    } catch (err) {
-      console.error("❌ Gagal hapus REST API:", err?.response?.data?.error || err.message);
-    }
+    await get().deleteData('restapi/delete', id, get().fetchRestApis);
   },
 }));

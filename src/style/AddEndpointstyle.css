@@ -208,17 +208,17 @@ body {
 }
 
 .btn-outline-primary {
-  background: var(--glass-bg);
-  border: 2px solid var(--glass-border);
-  color: var(--text-light);
-  box-shadow: var(--shadow-card);
+  background: var(--glass-bg) !important;
+  border: 2px solid var(--glass-border) !important;
+  color: var(--text-light) !important;
+  box-shadow: var(--shadow-card)!important;
 }
 
 .btn-outline-primary:hover {
-  background: var(--primary-gradient);
-  color: var(--text-light);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-glow);
+  background: var(--primary-gradient)!important;
+  color: var(--text-light)!important;
+  transform: translateY(-2px)!important;
+  box-shadow: var(--shadow-glow)!important;
   border-color: transparent;
 }
 
@@ -363,6 +363,20 @@ body {
 /* Form Controls */
 .form-select,
 .form-input,
+.form-select{
+  background: var(--bg-glass) !important;
+  backdrop-filter: blur(10px) !important;
+  color: var(--text-light) !important;
+  border: 2px solid var(--border-light) !important;
+  border-radius: var(--radius-lg) !important;
+  font-size: 1.1rem !important;
+  font-weight: 500 !important;
+  width: 100%;
+  padding: 18px 24px;
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-lg);
+
+}
 .form-textarea {
   width: 100%;
   padding: 18px 24px;
@@ -397,24 +411,6 @@ body {
   font-weight: 400 !important;
 }
 
-/* Form Select Styling dengan !important */
-.form-select {
-  background: var(--bg-glass) !important;
-  backdrop-filter: blur(10px) !important;
-  color: var(--text-light) !important;
-  border: 2px solid var(--border-light) !important;
-  border-radius: var(--radius-lg) !important;
-  font-size: 1.1rem !important;
-  font-weight: 500 !important;
-  appearance: none !important;
-  -webkit-appearance: none !important;
-  -moz-appearance: none !important;
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23f7fafc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e") !important;
-  background-repeat: no-repeat !important;
-  background-position: right 20px center !important;
-  background-size: 20px !important;
-  padding-right: 50px !important;
-}
 
 .form-select:focus {
   outline: none !important;

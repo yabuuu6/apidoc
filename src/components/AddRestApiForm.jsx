@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useApiStore } from "../store/useApiStore";
-import { base_url } from '../store/useApiStore';
+import { useApiStore, base_url } from "../store/useApiStore";
 import axios from "axios";
-
-import "../style/AddRestApistyle.css";
-
+import '../index.css';
+import { PlusIcon } from '@heroicons/react/24/solid';
+import { LightBulbIcon } from '@heroicons/react/24/outline';
 export default function AddRestApiForm() {
   const [form, setForm] = useState({
     projectName: "",
@@ -22,45 +21,11 @@ export default function AddRestApiForm() {
   const [selectedTable, setSelectedTable] = useState(null);
   const [tableStructure, setTableStructure] = useState([]);
   const [loadingTable, setLoadingTable] = useState(false);
+
   const addRestApi = useApiStore((state) => state.addRestApi);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
-  const handleDescribeTable = async (tableName) => {
-    const { engine, ip, port, username, password, database_name } = form;
-
-    // Jika table yang sama diklik, tutup struktur
-    if (selectedTable === tableName) {
-      setSelectedTable(null);
-      setTableStructure([]);
-      return;
-    }
-
-    try {
-      setLoadingTable(true);
-      const payload = {
-        engine,
-        ip,
-        port: port ? parseInt(port) : undefined,
-        username,
-        password,
-        database_name,
-        table: tableName,
-      };
-
-      const res = await axios.post(`${base_url}/describe`, payload);
-      setSelectedTable(tableName);
-      setTableStructure(res.data.structure || []);
-    } catch (err) {
-      console.error("Gagal ambil struktur tabel:", err);
-      toast.error("Gagal ambil struktur tabel");
-      setSelectedTable(null);
-      setTableStructure([]);
-    } finally {
-      setLoadingTable(false);
-    }
   };
 
   const handleTestConnection = async () => {
@@ -86,20 +51,51 @@ export default function AddRestApiForm() {
       setTables(res.data.tables || []);
       toast.success("Koneksi berhasil! Tabel ditemukan.");
     } catch (err) {
-      console.error("Gagal test koneksi:", err);
-      toast.error(err?.response?.data?.error || "Gagal koneksi ke database");
+      toast.error("Gagal koneksi ke database");
       setTables([]);
     } finally {
       setLoadingTest(false);
     }
   };
 
+  const handleDescribeTable = async (tableName) => {
+    const { engine, ip, port, username, password, database_name } = form;
+
+    if (selectedTable === tableName) {
+      setSelectedTable(null);
+      setTableStructure([]);
+      return;
+    }
+
+    try {
+      setLoadingTable(true);
+      const payload = {
+        engine,
+        ip,
+        port: port ? parseInt(port) : undefined,
+        username,
+        password,
+        database_name,
+        table: tableName,
+      };
+
+      const res = await axios.post(`${base_url}/describe`, payload);
+      setSelectedTable(tableName);
+      setTableStructure(res.data.structure || []);
+    } catch (err) {
+      toast.error("Gagal ambil struktur tabel");
+      setSelectedTable(null);
+      setTableStructure([]);
+    } finally {
+      setLoadingTable(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const { projectName, engine, ip, username, database_name } = form;
 
-    if (!projectName.trim() || !engine.trim() || !ip.trim() || !username.trim() || !database_name.trim()) {
+    if (!projectName || !engine || !ip || !username || !database_name) {
       toast.warning("Field dengan tanda * wajib diisi!");
       return;
     }
@@ -126,246 +122,221 @@ export default function AddRestApiForm() {
       setSelectedTable(null);
       setTableStructure([]);
     } catch (err) {
-      console.error("Gagal menyimpan REST API:", err);
-      const msg = err?.response?.data?.error || err.message || "Terjadi kesalahan";
-      toast.error(msg);
+      toast.error("Gagal menyimpan REST API");
     }
   };
 
   return (
-    <div className="add-endpoint-container">
-      <div className="add-endpoint-wrapper">
-        {/* Header */}
-        <div className="header-section">
-          <h1 className="main-title">Dokumentasi API</h1>
-          <div className="title-underline"></div>
-        </div>
+    <div className="min-h-screen bg-white text-gray-800 py-10 px-4">
+      <div className="text-center mb-10">
+        <h1 className="text-4xl font-bold mb-2">Dokumentasi API</h1>
+        <p className="text-gray-500">Buat koneksi database untuk endpoint REST API</p>
+      </div>
 
-        {/* Form */}
-        <form className="form-card" onSubmit={handleSubmit}>
-          <div className="form-header">
-            <h2 className="form-title">
-              <div className="form-icon"><span></span></div>
-              Form Tambah REST API
-            </h2>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+        {/* FORM KONEKSI */}
+        <form
+          onSubmit={handleSubmit}
+          className="md:col-span-2 bg-white border border-gray-200 shadow-md rounded-xl p-6 space-y-6"
+        >
+          <div className="flex items-center mb-4">
+            <PlusIcon className="w-5 h-5 text-blue-600 mr-2" />
+            <h2 className="text-lg font-semibold text-gray-800">Koneksi Database</h2>
           </div>
 
-          <div className="form-content">
-            <div className="form-group">
-              <label className="form-label">Nama Proyek <span className="required">*</span></label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Nama Proyek */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">Nama Proyek <span className="text-red-500">*</span></label>
               <input
                 type="text"
-                className="form-input"
                 name="projectName"
                 value={form.projectName}
                 onChange={handleChange}
-                placeholder="Contoh: API Keuangan Mahasiswa"
+                placeholder="Contoh: API Project"
+                className="input-field"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Platform Database <span className="required">*</span></label>
-              <select className="form-select" name="engine" value={form.engine} onChange={handleChange}>
+            {/* Engine */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">Engine <span className="text-red-500">*</span></label>
+              <select
+                name="engine"
+                value={form.engine}
+                onChange={handleChange}
+                className="input-field"
+              >
                 <option value="">-- Pilih Platform --</option>
                 <option value="MySQL">MySQL</option>
                 <option value="PostgreSQL">PostgreSQL</option>
               </select>
             </div>
 
-            <div className="form-group">
-              <label className="form-label">IP Lokal / Host <span className="required">*</span></label>
+            {/* IP */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">IP / Host <span className="text-red-500">*</span></label>
               <input
                 type="text"
-                className="form-input"
                 name="ip"
                 value={form.ip}
                 onChange={handleChange}
-                placeholder="Contoh: 127.0.0.1"
+                placeholder="127.0.0.1"
+                className="input-field"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Port <span className="label-hint">(opsional)</span></label>
+            {/* Port */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">Port</label>
               <input
                 type="number"
-                className="form-input"
                 name="port"
                 value={form.port}
                 onChange={handleChange}
-                placeholder="Contoh: 3306"
+                placeholder="3306 / 5432"
+                className="input-field"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Username <span className="required">*</span></label>
+            {/* Username */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">Username <span className="text-red-500">*</span></label>
               <input
                 type="text"
-                className="form-input"
                 name="username"
                 value={form.username}
                 onChange={handleChange}
-                placeholder="Contoh: root"
+                placeholder="root / admin"
+                className="input-field"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Password</label>
+            {/* Password */}
+            <div>
+              <label className="block mb-1 font-semibold text-sm">Password</label>
               <input
                 type="password"
-                className="form-input"
                 name="password"
                 value={form.password}
                 onChange={handleChange}
-                placeholder="Kosongkan jika tidak ada password"
+                placeholder="Opsional"
+                className="input-field"
               />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Nama Database <span className="required">*</span></label>
+            {/* Database Name */}
+            <div className="md:col-span-2">
+              <label className="block mb-1 font-semibold text-sm">Nama Database <span className="text-red-500">*</span></label>
               <input
                 type="text"
-                className="form-input"
                 name="database_name"
                 value={form.database_name}
                 onChange={handleChange}
-                placeholder="Contoh: api_db"
+                placeholder="contoh_db"
+                className="input-field"
               />
             </div>
+          </div>
 
-            <div className="submit-section">
-              <button
-                type="button"
-                className="test-button"
-                onClick={handleTestConnection}
-                disabled={loadingTest}
-              >
-                {loadingTest ? "Menghubungkan..." : "Test Koneksi"}
-              </button>
-
-              <button type="submit" className="submit-button">
-                <div className="button-icon"><span>+</span></div>
-                Simpan REST API
-              </button>
-            </div>
+          <div className="flex justify-end gap-4">
+            <button
+              type="button"
+              onClick={handleTestConnection}
+              disabled={loadingTest}
+              className={`btn ${loadingTest ? "bg-gray-300 text-gray-500" : "bg-blue-600 text-white hover:bg-blue-700"}`}
+            >
+              {loadingTest ? "Menghubungkan..." : "Test Koneksi"}
+            </button>
+            <button type="submit" className="btn bg-green-600 text-white hover:bg-green-700">
+              + Simpan REST API
+            </button>
           </div>
         </form>
 
-        {/* Tabel Cards - Struktur yang Diperbaiki */}
-        {tables.length > 0 && (
-          <div className="tables-section">
-            <h3>🗂️ Tabel Database ({tables.length} tabel ditemukan)</h3>
-            <div className="table-cards-wrapper">
-              {tables.map((row, idx) => {
-                const tableName = Object.values(row)[0];
-                const isSelected = selectedTable === tableName;
-                const isLoading = loadingTable && selectedTable === tableName;
-                
-                return (
-                  <div
-                    key={idx}
-                    className={`table-card ${isSelected ? "selected" : ""}`}
-                  >
-                    {/* Header Tabel yang Diperbaiki */}
-                    <div className="table-card-header">
-                      <div className="table-info">
-                        <div className="table-icon">📋</div>
-                        <div className="table-details">
-                          <h4>{tableName}</h4>
-                          <span className="table-status">
-                            {isSelected 
-                              ? `Struktur ditampilkan ${tableStructure.length ? `(${tableStructure.length} kolom)` : ''}` 
-                              : "Klik tombol untuk melihat struktur"
-                            }
-                          </span>
-                        </div>
-                      </div>
-                      
-                      <button
-                        type="button"
-                        className={`view-table-btn ${isSelected ? 'active' : ''}`}
-                        onClick={() => handleDescribeTable(tableName)}
-                        disabled={isLoading}
-                      >
-                        {isLoading ? (
-                          <>
-                            <div className="btn-spinner"></div>
-                            <span>Loading...</span>
-                          </>
-                        ) : isSelected ? (
-                          <>
-                            <span>👁️</span>
-                            <span>Tutup</span>
-                          </>
-                        ) : (
-                          <>
-                            <span>🔍</span>
-                            <span>Lihat Tabel</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-
-                    {/* Structure Table - Dalam Card yang Diperbaiki */}
-                    {isSelected && tableStructure.length > 0 && (
-                      <div className="table-structure">
-                        <div className="structure-header">
-                          <h5>
-                            📊 Struktur Tabel: <code>{tableName}</code>
-                          </h5>
-                          <span className="column-count">
-                            {tableStructure.length} kolom
-                          </span>
-                        </div>
-                        
-                        <div className="table-wrapper">
-                          <table>
-                            <thead>
-                              <tr>
-                                {tableStructure.length > 0 && Object.keys(tableStructure[0]).map((key) => (
-                                  <th key={key}>{key}</th>
-                                ))}
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {tableStructure.map((col, i) => (
-                                <tr key={i}>
-                                  {Object.values(col).map((val, j) => (
-                                    <td key={j}>
-                                      <span className="cell-content">{val || '-'}</span>
-                                    </td>
-                                  ))}
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
-        {/* Info Tips */}
-        <div className="info-card">
-          <div className="info-content">
-            <div className="info-icon"><span>ⓘ</span></div>
-            <div className="info-text">
-              <p className="info-title">Tips Penggunaan:</p>
-              <ul className="info-list">
-                <li> Isikan nama proyek yang jelas dan deskriptif</li>
-                <li> Pilih platform database yang digunakan dalam proyek</li>
-                <li> IP Lokal biasanya 127.0.0.1 untuk server lokal</li>
-                <li> Jika port dikosongkan, sistem akan menggunakan default</li>
-                <li> Nama database harus sesuai dan sudah tersedia</li>
-                <li> Klik "Lihat Tabel" untuk melihat struktur detail tabel</li>
-              </ul>
-            </div>
-          </div>
+        {/* TIPS PENGISIAN */}
+        <div className="bg-white border border-gray-200 shadow-md rounded-xl p-6 space-y-3">
+          
+          <div className="flex items-center gap-2 font-semibold mb-2">
+          <LightBulbIcon className="w-5 h-5 text-yellow-500" />
+          Tips Pengisan:
+        </div>
+          <ul className="text-sm text-gray-700 space-y-2 list-disc list-inside">
+            <li><strong>Nama Proyek:</strong> Gunakan nama yang deskriptif dan unik.</li>
+            <li><strong>Engine:</strong> Sesuaikan dengan jenis database yang digunakan.</li>
+            <li><strong>IP/Host:</strong> Gunakan <code>127.0.0.1</code> untuk lokal atau alamat server.</li>
+            <li><strong>Port:</strong> Kosongkan untuk default (MySQL: 3306, PostgreSQL: 5432).</li>
+            <li><strong>Username & Password:</strong> Gunakan user database yang memiliki akses ke schema.</li>
+            <li><strong>Nama Database:</strong> Wajib diisi sesuai nama database yang ingin dikoneksikan.</li>
+          </ul>
         </div>
       </div>
+
+      {/* Tabel Hasil Koneksi */}
+      {tables.length > 0 && (
+        <div className="max-w-7xl mx-auto mt-10 space-y-4">
+          <h2 className="text-lg font-semibold text-center">
+            Tabel Ditemukan ({tables.length})
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {tables.map((row, idx) => {
+              const tableName = Object.values(row)[0];
+              const isSelected = selectedTable === tableName;
+              const isLoading = loadingTable && isSelected;
+
+              return (
+                <div
+                  key={idx}
+                  className={`border rounded-xl shadow-sm p-4 ${
+                    isSelected ? "border-blue-500 bg-blue-50" : "bg-white"
+                  }`}
+                >
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="font-medium">📋 {tableName}</span>
+                    <button
+                      onClick={() => handleDescribeTable(tableName)}
+                      className={`text-sm px-3 py-1 rounded ${
+                        isSelected
+                          ? "bg-red-500 text-white hover:bg-red-600"
+                          : "bg-blue-500 text-white hover:bg-blue-600"
+                      }`}
+                    >
+                      {isLoading
+                        ? "Loading..."
+                        : isSelected
+                        ? "Tutup"
+                        : "Lihat Tabel"}
+                    </button>
+                  </div>
+
+                  {isSelected && tableStructure.length > 0 && (
+                    <div className="overflow-x-auto">
+                      <table className="w-full text-sm border border-gray-200">
+                        <thead>
+                          <tr className="bg-gray-100 text-left">
+                            {Object.keys(tableStructure[0]).map((key) => (
+                              <th key={key} className="p-2 border-b">{key}</th>
+                            ))}
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {tableStructure.map((col, i) => (
+                            <tr key={i}>
+                              {Object.values(col).map((val, j) => (
+                                <td key={j} className="p-2 border-t text-xs">{val}</td>
+                              ))}
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
