@@ -6,21 +6,23 @@ import { WrenchScrewdriverIcon } from '@heroicons/react/24/solid';
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 
 
+
 export default function HomePage() {
   const {
-    statusFilter,
-    setStatusFilter,
     fetchEndpoints,
     fetchDomains,
   } = useApiStore();
-
-  const [domainSearch, setDomainSearch] = useState("");
+  
+  const [statusFilter, setStatusFilter] = useState("");
+  const [pathSearch, setPathSearch] = useState("");
   const [isVisible, setIsVisible] = useState(false);
   const [cardsVisible, setCardsVisible] = useState(false);
+  
+  
 
   useEffect(() => {
-    setStatusFilter("");
-    setDomainSearch("");
+    // setStatusFilter("");
+    // setDomainSearch("");
     fetchEndpoints();
     fetchDomains();
     
@@ -111,50 +113,47 @@ export default function HomePage() {
             </div>
 
             <h3 className="text-lg font-bold text-gray-800 mb-4" style={{
-              transform: cardsVisible ? 'translateY(0)' : 'translateY(10px)',
-              opacity: cardsVisible ? 1 : 0,
-              transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s'
-            }}>
-              Pencarian Domain
-              <div className="h-[3px] w-12 rounded mt-2 bg-gray-300" style={{
-                width: cardsVisible ? '3rem' : '0',
-                transition: 'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s'
-              }}></div>
-            </h3>
+  transform: cardsVisible ? 'translateY(0)' : 'translateY(10px)',
+  opacity: cardsVisible ? 1 : 0,
+  transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s'
+}}>
+  Pencarian Path
+  <div className="h-[3px] w-12 rounded mt-2 bg-gray-300" style={{
+    width: cardsVisible ? '3rem' : '0',
+    transition: 'width 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s'
+  }}></div>
+</h3>
 
-            <p className="text-gray-600 mb-6 leading-relaxed" style={{
-              transform: cardsVisible ? 'translateY(0)' : 'translateY(10px)',
-              opacity: cardsVisible ? 1 : 0,
-              transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s'
-            }}>
-              Cari Domain API
-            </p>
+<p className="text-gray-600 mb-6 leading-relaxed" style={{
+  transform: cardsVisible ? 'translateY(0)' : 'translateY(10px)',
+  opacity: cardsVisible ? 1 : 0,
+  transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.4s'
+}}>
+  Cari Path Endpoint API
+</p>
 
-            <div className="relative" style={{
-              transform: cardsVisible ? 'translateY(0)' : 'translateY(15px)',
-              opacity: cardsVisible ? 1 : 0,
-              transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s'
-            }}>
-              <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10">
-                <MagnifyingGlassIcon className="w-4 h-4" />
-              </div>
-              <i className="bi bi-search absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 text-sm"></i>
-              <input
-                type="text"
-                className="w-full pl-12 pr-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-md text-gray-800 text-base outline-none transition-all duration-300 focus:border-gray-600 focus:bg-white"
-                placeholder="Contoh: api.example.com"
-                value={domainSearch}
-                onChange={(e) => setDomainSearch(e.target.value)}
-                style={{
-                  transition: 'all 0.3s ease, transform 0.2s ease',
-                  ':focus': {
-                    transform: 'scale(1.02)'
-                  }
-                }}
-                onFocus={(e) => e.target.style.transform = 'scale(1.02)'}
-                onBlur={(e) => e.target.style.transform = 'scale(1)'}
-              />
-            </div>
+<div className="relative" style={{
+  transform: cardsVisible ? 'translateY(0)' : 'translateY(15px)',
+  opacity: cardsVisible ? 1 : 0,
+  transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.5s'
+}}>
+  <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 z-10">
+    <MagnifyingGlassIcon className="w-4 h-4" />
+  </div>
+  <input
+    type="text"
+    className="w-full pl-12 pr-4 py-3 bg-gray-100 border-2 border-gray-200 rounded-md text-gray-800 text-base outline-none transition-all duration-300 focus:border-gray-600 focus:bg-white"
+    placeholder="Contoh: /users atau /products"
+    value={pathSearch}
+    onChange={(e) => setPathSearch(e.target.value)}
+    style={{
+      transition: 'all 0.3s ease, transform 0.2s ease'
+    }}
+    onFocus={(e) => e.target.style.transform = 'scale(1.02)'}
+    onBlur={(e) => e.target.style.transform = 'scale(1)'}
+  />
+</div>
+
           </div>
 
           {/* Status Filter Card */}
@@ -258,7 +257,8 @@ export default function HomePage() {
             e.target.style.boxShadow = '0 4px 15px rgba(221, 92, 92, 0.1)';
             e.target.style.transform = 'translateY(0)';
           }}>
-            <EndpointList domainSearch={domainSearch} />
+            <EndpointList pathSearch={pathSearch} statusFilter={statusFilter} />
+
           </div>
         </div>
       </div>

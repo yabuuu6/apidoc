@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import { EyeIcon, PencilSquareIcon, TrashIcon, ClipboardIcon } from "@heroicons/react/24/outline";
 
-export default function EndpointList({ domainSearch = "" }) {
+export default function EndpointList({ pathSearch = "", statusFilter = "" }) {
   const {
     endpoints,
     fetchEndpoints,
@@ -20,12 +20,17 @@ export default function EndpointList({ domainSearch = "" }) {
     fetchEndpoints();
   }, [fetchEndpoints]);
 
+  // const filtered = endpoints.filter((api) => {
+  //   const statusMatch = !statusFilter || api.status === api.statusFilter;
+  //   const domainMatch =
+  //     !domainSearch || api.baseUrl.toLowerCase().includes(domainSearch.toLowerCase());
+  //   return statusMatch && domainMatch;
+  // });
   const filtered = endpoints.filter((api) => {
-    const statusMatch = !api.statusFilter || api.status === api.statusFilter;
-    const domainMatch =
-      !domainSearch || api.baseUrl.toLowerCase().includes(domainSearch.toLowerCase());
-    return statusMatch && domainMatch;
-  });
+  const matchesStatus = statusFilter ? api.status === statusFilter : true;
+  const matchesPath = pathSearch ? api.path.includes(pathSearch) : true;
+  return matchesStatus && matchesPath;
+});
 
   const openModal = (type, endpoint) => {
     const formattedWebsites = Array.isArray(endpoint.websites)
@@ -53,7 +58,6 @@ export default function EndpointList({ domainSearch = "" }) {
         websites: modalData.websites,
         response: modalData.response,
       });
-      toast.success("Endpoint berhasil diubah");
       setShowModal(false);
     } catch (err) {
       toast.error("Gagal mengubah endpoint");
@@ -63,7 +67,6 @@ export default function EndpointList({ domainSearch = "" }) {
   const handleConfirmDelete = async () => {
     try {
       await deleteEndpoint(modalData.id);
-      toast.success("Endpoint berhasil dihapus");
       setShowModal(false);
     } catch (err) {
       toast.error("Gagal menghapus endpoint");

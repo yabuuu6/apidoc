@@ -2,21 +2,19 @@ import { create } from 'zustand';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 
-export const base_url = 'http://localhost:5000/api';
+export const base_url = import.meta.env.VITE_API_URL;
 
 export const useApiStore = create((set, get) => ({
   endpoints: [],
   domains: [],
   restApis: [],
-  statusFilter: '',
+  // setStatusFilter,
   loadingEndpoints: false,
   loadingDomains: false,
   loadingRestApis: false,
 
-  // Status Filter
-  setStatusFilter: (status) => set({ statusFilter: status }),
+  // setStatusFilter: (status) => set({ statusFilter: status }),
 
-  // Generic GET
   getData: async (path, key, mapper, setLoadingKey) => {
     if (setLoadingKey) set({ [setLoadingKey]: true });
     try {
@@ -31,7 +29,6 @@ export const useApiStore = create((set, get) => ({
     }
   },
 
-  // Generic DELETE
   deleteData: async (path, id, fetchFunc, setLoadingKey) => {
     if (setLoadingKey) set({ [setLoadingKey]: true });
     try {
@@ -156,7 +153,7 @@ export const useApiStore = create((set, get) => ({
   try {
     const url = `http://localhost:5000/api/call/${id}/${path}`;
     const res = await axios.get(url, { timeout: 10000 });
-    return res.data; // response dari backend
+    return res.data;
   } catch (err) {
     console.error('❌ Error call API:', err.message);
     return {
@@ -164,6 +161,27 @@ export const useApiStore = create((set, get) => ({
       message: err?.response?.data?.error || err.message,
       status: err?.response?.status || 500
     };
+  }
+},
+
+generateSingleEndpointFromDb: async (uuid, table, path = `/${table}`) => {
+  try {
+    const res = await axios.post(`http://localhost:5000/api/restapi/generateone/${uuid}`, {
+      table,
+      path
+    });
+
+    toast.success(`Endpoint berhasil dibuat untuk tabel "${table}"`);
+
+    await get().fetchEndpoints();
+
+    return res.data;
+  } catch (err) {
+    const msg = err?.response?.data?.error || err.message || 'Gagal generate endpoint';
+    toast.error(`Gagal generate: ${msg}`);
+    console.error('DETAIL ERROR:', err?.response?.data || err);
+
+    throw new Error(msg);
   }
 },
 
