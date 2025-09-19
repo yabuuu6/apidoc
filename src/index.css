@@ -74,3 +74,16 @@ a {
 a:hover {
   color: #666666;
 }
+
+/* Sembunyikan scrollbar di seluruh halaman */
+/* body {
+  overflow-y: hidden;
+} */
+
+/* Opsional: scroll tetap bisa tapi scrollbar disembunyikan */
+body::-webkit-scrollbar {
+  display: none;
+} 
+
+
+

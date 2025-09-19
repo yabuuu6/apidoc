@@ -155,7 +155,7 @@ export const useApiStore = create((set, get) => ({
     const res = await axios.get(url, { timeout: 10000 });
     return res.data;
   } catch (err) {
-    console.error('❌ Error call API:', err.message);
+    console.error(' Error call API:', err.message);
     return {
       error: true,
       message: err?.response?.data?.error || err.message,
