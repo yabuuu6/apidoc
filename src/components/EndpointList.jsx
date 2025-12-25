@@ -109,7 +109,9 @@ export default function EndpointList({ pathSearch = "", statusFilter = "" }) {
       ) : (
         <div className="grid gap-6 grid-cols-[repeat(auto-fill,minmax(350px,1fr))]">
           {filtered.map((api) => {
-            const publicUrl = `http://localhost:5000/api/call/${api.id}${api.path}`;
+            // const publicUrl = `http://localhost:5000/api/call/${api.id}${api.path}`;
+            // const publicUrl = `https://magang.apikobar.id/api/call/${api.id}${api.path}`;
+            const publicUrl = `https://apidoc-be--ytchochote.replit.app/api/call/${api.id}${api.path}`;
             return (
               <div
                 key={api.id}

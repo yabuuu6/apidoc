@@ -2,7 +2,7 @@ import { Routes, Route } from 'react-router-dom';
 import HomePage from './pages/Homepage';
 import AddDomainForm from './components/AddDomainForm';
 import AddEndpointForm from './components/AddEndpointForm';
-import AddRestApiForm from './components/AddRestApiForm';
+import AddRestApiForm from './components/AddRestAPIForm';
 import Footer from './components/Footer';
 import Navbar from './components/Appbar';
 import { ToastContainer } from 'react-toastify';
